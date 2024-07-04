@@ -45,9 +45,7 @@ Installation:
 ```
 source("http://bioconductor.org/biocLite.R")
 biocLite("topGO")
-install.packages("devtools", dependencies=TRUE)
-devtools::install_github("IOR-Bioinformatics/PCSF", repos=BiocInstaller::biocinstallRepos(),
-                         dependencies=TRUE, type="source", force=TRUE)
+remotes::install_github("BigOmics/PCSF")
 ```
 
 
