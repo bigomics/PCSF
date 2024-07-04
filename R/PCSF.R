@@ -79,7 +79,7 @@
 
 
 PCSF <-
-function(ppi, terminals, w = 2, b = 1, mu = 0.0005, dummies){
+function(ppi, terminals, w = 2, b = 1, mu = 0.0005, dummies, verbose = 1){
 
   # Checking function arguments
   if (missing(ppi))
@@ -107,7 +107,7 @@ function(ppi, terminals, w = 2, b = 1, mu = 0.0005, dummies){
   percent = signif((length(index) - sum(is.na(index)))/length(index)*100, 4)
   if (percent < 5)
     stop("  Less than 1% of your terminal nodes are matched in the interactome, check your terminals!")
-  cat(paste0("  ", percent, "% of your terminal nodes are included in the interactome\n"))
+  if(verbose > 0) cat(paste0("  ", percent, "% of your terminal nodes are included in the interactome\n"))
   terminal_names = terminal_names[!is.na(index)]
   terminal_values = terminal_values[!is.na(index)]
   index = index[!is.na(index)]
@@ -117,8 +117,7 @@ function(ppi, terminals, w = 2, b = 1, mu = 0.0005, dummies){
     dummies = terminal_names #re-assign this to allow for input
 
   ## Prepare input file for MST-PCSF implementation in C++
-
-  cat("  Solving the PCSF...\n")
+  if(verbose > 0) cat("  Solving the PCSF...\n")
 
   # Calculate the hub penalization scores
   node_degrees = igraph::degree(ppi)
@@ -129,17 +128,15 @@ function(ppi, terminals, w = 2, b = 1, mu = 0.0005, dummies){
   index = which(node_prizes==0)
   node_prizes[index] = hub_penalization[index]
 
-
   # Construct the list of edges
   edges = ends(ppi,es = E(ppi))
   from = c(rep("DUMMY", length(dummies)), edges[,1])
   to = c(dummies, edges[,2])
-
   cost = c(rep(w, length(dummies)), E(ppi)$weight)
 
   #PCSF will faill if there are NAs in weights, this will check and fail gracefully
   if(any(is.na(E(ppi)$weight))){
-
+    stop("no NA allowed in weights")
   }
 
   ## Feed the input into the PCSF algorithm
