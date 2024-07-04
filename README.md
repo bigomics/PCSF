@@ -45,7 +45,7 @@ Installation:
 ```
 source("http://bioconductor.org/biocLite.R")
 biocLite("topGO")
-remotes::install_github("BigOmics/PCSF")
+remotes::install_github("bigomics/PCSF")
 ```
 
 
